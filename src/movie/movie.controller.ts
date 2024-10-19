@@ -17,8 +17,8 @@ import { CustomException } from 'src/common/filters/custom-exception.filter';
 export class MovieController {
   constructor(private movieService: MovieService) {}
 
-  @Get('movies')
   @UseGuards(Authenticate)
+  @Get('movies')
   async all(
     @Query('page') page: number = 1,
     @Query('pageSize') pageSize: number = 20,
@@ -26,20 +26,20 @@ export class MovieController {
     return this.movieService.getMovies(page, pageSize);
   }
 
-  @Put('rate')
   @UseGuards(Authenticate)
+  @Put('rate')
   async rate(@Body() rateDto: RateDto, @Req() req: Request) {
     return this.movieService.rateMovie(rateDto, req['user']._id);
   }
 
-  @Put('add-watch-list/movie/:movieId')
   @UseGuards(Authenticate)
+  @Put('add-watch-list/movie/:movieId')
   async addToWatchList(@Param('movieId') movieId: string, @Req() req: Request) {
     return this.movieService.addToWatchlist(movieId, req['user']._id);
   }
 
-  @Get('filter')
   @UseGuards(Authenticate)
+  @Get('filter')
   async filterByGenre(
     @Query('genre') genre: string,
     @Query('page') page: number = 1,
@@ -51,8 +51,8 @@ export class MovieController {
     return this.movieService.findByGenre(genre, page);
   }
 
-  @Put('remove-watch-list/movie/:movieId')
   @UseGuards(Authenticate)
+  @Put('remove-watch-list/movie/:movieId')
   async removeFromWatchlist(
     @Param('movieId') movieId: string,
     @Req() req: Request,

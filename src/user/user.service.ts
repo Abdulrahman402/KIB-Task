@@ -16,4 +16,26 @@ export class UserService {
 
     return user;
   }
+
+  async findUserWithWatchlist(userId: string): Promise<User> {
+    console.log(userId);
+    const movies = await this.userModel
+      .findById(userId)
+      .select('-password -ratings')
+      .populate('watchlist')
+      .exec();
+
+    console.log(movies);
+    return movies;
+  }
+
+  async findUserWithRatedMovies(userId: string): Promise<User> {
+    return await this.userModel
+      .findById(userId)
+      .select('-password')
+      .populate({
+        path: 'ratings.movieId',
+      })
+      .exec();
+  }
 }

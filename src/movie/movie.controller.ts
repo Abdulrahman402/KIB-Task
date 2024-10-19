@@ -1,6 +1,5 @@
 import {
   Controller,
-  Post,
   Get,
   Query,
   Put,
@@ -12,6 +11,7 @@ import {
 import { MovieService } from './movie.service';
 import { RateDto } from './movie.dto';
 import { Authenticate } from 'src/common/guard';
+import { CustomException } from 'src/common/filters/custom-exception.filter';
 
 @Controller('movie')
 export class MovieController {
@@ -36,5 +36,27 @@ export class MovieController {
   @UseGuards(Authenticate)
   async addToWatchList(@Param('movieId') movieId: string, @Req() req: Request) {
     return this.movieService.addToWatchlist(movieId, req['user']._id);
+  }
+
+  @Get('filter')
+  @UseGuards(Authenticate)
+  async filterByGenre(
+    @Query('genre') genre: string,
+    @Query('page') page: number = 1,
+  ) {
+    if (!genre) {
+      throw new CustomException('Genre query parameter is required');
+    }
+
+    return this.movieService.findByGenre(genre, page);
+  }
+
+  @Put('remove-watch-list/movie/:movieId')
+  @UseGuards(Authenticate)
+  async removeFromWatchlist(
+    @Param('movieId') movieId: string,
+    @Req() req: Request,
+  ) {
+    return this.movieService.removeFromWatchlist(movieId, req['user']._id);
   }
 }

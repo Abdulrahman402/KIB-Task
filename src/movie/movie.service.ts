@@ -103,6 +103,46 @@ export class MovieService {
     return updatedMovie;
   }
 
+  async findByGenre(genre: string, page: number): Promise<Movie[]> {
+    const skip = (page - 1) * 20;
+    return this.movieModel
+      .find({ genre: { $in: [genre] } })
+      .skip(skip)
+      .limit(20)
+      .exec();
+  }
+
+  async removeFromWatchlist(movieId: string, userId: string) {
+    const user = await this.userModel.findById(userId).exec();
+
+    if (!user) {
+      throw new CustomException('User not found');
+    }
+
+    const movie = await this.movieModel.findById(movieId).exec();
+    if (!movie) {
+      throw new CustomException('Movie not found');
+    }
+
+    const movieIndex = user.watchlist.indexOf(movieId);
+
+    if (movieIndex > -1) {
+      user.watchlist.splice(movieIndex, 1);
+    } else {
+      throw new CustomException('Movie not found in watchlist');
+    }
+
+    const userIndex = movie.watchlistedBy.indexOf(userId);
+
+    if (userIndex > -1) {
+      movie.watchlistedBy.splice(userIndex, 1);
+    }
+
+    const [updatedMovie] = await Promise.all([movie.save(), user.save()]);
+
+    return updatedMovie;
+  }
+
   async insertTmdbMovies(tmdbMovies: any[]): Promise<Movie[]> {
     const newMovies = tmdbMovies.map((movie) => {
       const genreNames = movie.genre_ids.map(

@@ -8,6 +8,7 @@ import { CacheModule } from './cache/cache.module';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { JwtModule } from '@nestjs/jwt';
+import { TmdbModule } from './tmdb/tmdb.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { JwtModule } from '@nestjs/jwt';
     AuthModule,
     MovieModule,
     CacheModule,
+    TmdbModule,
   ],
   controllers: [AppController],
   providers: [AppService],

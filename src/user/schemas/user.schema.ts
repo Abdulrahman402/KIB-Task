@@ -14,7 +14,7 @@ export const UserSchema = new Schema({
   watchlist: [{ type: String, ref: 'Movie' }],
   ratings: [
     {
-      movieId: { type: String, ref: 'Movie' },
+      movieId: { type: Types.ObjectId, ref: 'Movie' },
       rating: { type: Number, min: 1, max: 10 },
     },
   ],

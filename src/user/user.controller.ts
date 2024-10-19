@@ -7,6 +7,12 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @UseGuards(Authenticate)
+  @Get('current')
+  async current(@Req() req: Request) {
+    return this.userService.currentUser(req['user']._id);
+  }
+
+  @UseGuards(Authenticate)
   @Get('watchlist')
   async getUserWithWatchlist(@Req() req: Request) {
     return this.userService.findUserWithWatchlist(req['user']._id);

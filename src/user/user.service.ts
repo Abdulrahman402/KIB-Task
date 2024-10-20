@@ -1,13 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+import { Cache } from 'cache-manager';
 
 import { User } from './schemas/user.schema';
 import { CustomException } from 'src/common/filters/custom-exception.filter';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel('User') private userModel: Model<User>) {}
+  constructor(
+    @InjectModel('User') private userModel: Model<User>,
+    @Inject('CACHE_MANAGER') private cacheManager: Cache,
+  ) {}
 
   async currentUser(user_id) {
     const user = await this.userModel.findById(user_id).select('-password');
@@ -18,6 +22,13 @@ export class UserService {
   }
 
   async findUserWithWatchlist(userId: string) {
+    const cacheKey = `user:${userId}`;
+
+    const cachedUser = await this.cacheManager.get(cacheKey);
+    if (cachedUser) {
+      return cachedUser;
+    }
+
     const user = await this.userModel
       .findById(userId)
       .select('-password')
@@ -47,10 +58,19 @@ export class UserService {
       watchlist: watchlistWithUserRating,
     };
 
+    await this.cacheManager.set(cacheKey, result);
+
     return result;
   }
 
   async findUserWithRatedMovies(userId: string) {
+    const cacheKey = `user:${userId}`;
+
+    const cachedUser = await this.cacheManager.get(cacheKey);
+    if (cachedUser) {
+      return cachedUser;
+    }
+
     const user = await this.userModel
       .findById(userId)
       .select('-password')
@@ -59,10 +79,6 @@ export class UserService {
         select: 'title genre ratings',
       })
       .exec();
-
-    if (!user) {
-      throw new CustomException('User not found');
-    }
 
     const ratedMovies = user.ratings.map((rating) => {
       const movie = rating.movieId;
@@ -82,10 +98,13 @@ export class UserService {
       }
     });
 
-    return {
+    const results = {
       _id: user._id,
       username: user.username,
       ratedMovies,
     };
+    await this.cacheManager.set(cacheKey, results);
+
+    return results;
   }
 }

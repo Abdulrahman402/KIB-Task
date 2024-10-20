@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { CustomException } from 'src/common/filters/custom-exception.filter';
@@ -6,6 +6,7 @@ import { Movie } from './schemas/movie.schema';
 import { TmdbService } from 'src/tmdb/tmdb.service';
 import { RateDto } from './movie.dto';
 import { User } from 'src/user/schemas/user.schema';
+import { Cache } from 'cache-manager';
 
 @Injectable()
 export class MovieService {
@@ -13,9 +14,17 @@ export class MovieService {
     @InjectModel('Movie') private movieModel: Model<Movie>,
     @InjectModel('User') private userModel: Model<User>,
     private tmdbService: TmdbService,
+    @Inject('CACHE_MANAGER') private cacheManager: Cache,
   ) {}
 
   async getMovies(page: number = 1, pageSize: number = 20): Promise<Movie[]> {
+    const cacheKey = `movies_page=${page}`;
+
+    const cachedMovies = await this.cacheManager.get(cacheKey);
+    if (cachedMovies) {
+      return cachedMovies as Movie[];
+    }
+
     const skip = (page - 1) * pageSize;
 
     const dbMovies = await this.movieModel
@@ -36,6 +45,8 @@ export class MovieService {
 
       return [...dbMovies, ...insertedMovies];
     }
+
+    await this.cacheManager.set(cacheKey, dbMovies);
 
     return dbMovies;
   }

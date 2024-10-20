@@ -1,17 +1,18 @@
 import { Schema, Document, Types } from 'mongoose';
+import { Movie } from 'src/movie/schemas/movie.schema';
 
 export interface User extends Document {
   _id: Types.ObjectId;
   username: string;
   password: string;
-  watchlist: string[];
-  ratings: { movieId: string; rating: number }[];
+  watchlist: Types.ObjectId[];
+  ratings: { movieId: Types.ObjectId | Movie; rating: number }[];
 }
 
 export const UserSchema = new Schema({
   username: { type: String, required: true },
   password: { type: String, required: true },
-  watchlist: [{ type: String, ref: 'Movie' }],
+  watchlist: [{ type: Types.ObjectId, ref: 'Movie' }],
   ratings: [
     {
       movieId: { type: Types.ObjectId, ref: 'Movie' },

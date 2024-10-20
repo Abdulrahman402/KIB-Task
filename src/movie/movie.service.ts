@@ -67,7 +67,10 @@ export class MovieService {
     if (existingRating) {
       existingRating.rating = rateDto.rate;
     } else {
-      user.ratings.push({ movieId: movie._id as string, rating: rateDto.rate });
+      user.ratings.push({
+        movieId: movie._id as Types.ObjectId,
+        rating: rateDto.rate,
+      });
     }
 
     const [ratedMovie] = await Promise.all([movie.save(), user.save()]);
@@ -75,7 +78,10 @@ export class MovieService {
     return ratedMovie;
   }
 
-  async addToWatchlist(movieId: string, userId: string): Promise<Movie> {
+  async addToWatchlist(
+    movieId: Types.ObjectId,
+    userId: string,
+  ): Promise<Movie> {
     const movie = await this.movieModel.findById(movieId).exec();
     if (!movie) {
       throw new CustomException('Movie not found');
@@ -112,7 +118,7 @@ export class MovieService {
       .exec();
   }
 
-  async removeFromWatchlist(movieId: string, userId: string) {
+  async removeFromWatchlist(movieId: Types.ObjectId, userId: string) {
     const user = await this.userModel.findById(userId).exec();
 
     if (!user) {

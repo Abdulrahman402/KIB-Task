@@ -12,6 +12,7 @@ import { MovieService } from './movie.service';
 import { RateDto } from './movie.dto';
 import { Authenticate } from 'src/common/guard';
 import { CustomException } from 'src/common/filters/custom-exception.filter';
+import { Types } from 'mongoose';
 
 @Controller('movie')
 export class MovieController {
@@ -34,7 +35,10 @@ export class MovieController {
 
   @UseGuards(Authenticate)
   @Put('add-watch-list/movie/:movieId')
-  async addToWatchList(@Param('movieId') movieId: string, @Req() req: Request) {
+  async addToWatchList(
+    @Param('movieId') movieId: Types.ObjectId,
+    @Req() req: Request,
+  ) {
     return this.movieService.addToWatchlist(movieId, req['user']._id);
   }
 
@@ -54,7 +58,7 @@ export class MovieController {
   @UseGuards(Authenticate)
   @Put('remove-watch-list/movie/:movieId')
   async removeFromWatchlist(
-    @Param('movieId') movieId: string,
+    @Param('movieId') movieId: Types.ObjectId,
     @Req() req: Request,
   ) {
     return this.movieService.removeFromWatchlist(movieId, req['user']._id);

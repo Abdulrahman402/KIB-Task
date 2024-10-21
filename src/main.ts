@@ -21,11 +21,11 @@ async function bootstrap() {
     .setTitle('KIB Task API')
     .setDescription('API documentation for KIB Task')
     .setVersion('1.0')
-    .addBearerAuth() // Add JWT or other authentication methods here
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api-docs', app, document); // You can ch
+  SwaggerModule.setup('api-docs', app, document);
 
   await app.listen(process.env.PORT || 8080);
 }

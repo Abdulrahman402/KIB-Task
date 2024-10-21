@@ -46,7 +46,7 @@ paths:
                   watchlist:
                     type: array
                     items:
-                      type: string # Adjust this according to the actual structure of the watchlist items
+                      type: string
         '401':
           description: Unauthorized access
 

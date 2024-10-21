@@ -8,10 +8,11 @@ import {
   UseGuards,
   Req,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { MovieService } from './movie.service';
 import { RateDto } from './movie.dto';
-import { Authenticate } from 'src/common/guard';
-import { CustomException } from 'src/common/filters/custom-exception.filter';
+import { Authenticate } from '../common/guard';
+import { CustomException } from '../common/filters/custom-exception.filter';
 import { Types } from 'mongoose';
 import {
   ApiBearerAuth,

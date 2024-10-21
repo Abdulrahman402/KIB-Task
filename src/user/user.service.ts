@@ -1,11 +1,11 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Cache } from 'cache-manager';
 import { omit } from 'ramda';
 
 import { User } from './schemas/user.schema';
-import { CustomException } from 'src/common/filters/custom-exception.filter';
+import { CustomException } from '../common/filters/custom-exception.filter';
 
 @Injectable()
 export class UserService {
@@ -26,7 +26,7 @@ export class UserService {
     return { ...omit(['password'], user) };
   }
 
-  async findUserWithWatchlist(userId: string) {
+  async findUserWithWatchlist(userId: Types.ObjectId) {
     const cacheKey = `user:${userId}`;
 
     const cachedUser = await this.cacheManager.get(cacheKey);
@@ -68,7 +68,7 @@ export class UserService {
     return result;
   }
 
-  async findUserWithRatedMovies(userId: string) {
+  async findUserWithRatedMovies(userId: Types.ObjectId) {
     const cacheKey = `user:${userId}`;
 
     const cachedUser = await this.cacheManager.get(cacheKey);

@@ -1,11 +1,11 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { CustomException } from 'src/common/filters/custom-exception.filter';
+import { CustomException } from '../common/filters/custom-exception.filter';
 import { Movie } from './schemas/movie.schema';
-import { TmdbService } from 'src/tmdb/tmdb.service';
+import { TmdbService } from '../tmdb/tmdb.service';
 import { RateDto } from './movie.dto';
-import { User } from 'src/user/schemas/user.schema';
+import { User } from '../user/schemas/user.schema';
 import { Cache } from 'cache-manager';
 
 @Injectable()
@@ -52,11 +52,12 @@ export class MovieService {
   }
 
   async rateMovie(rateDto: RateDto, userId: Types.ObjectId): Promise<Movie> {
+    if (rateDto.rate > 10 || rateDto.rate < 1)
+      throw new CustomException('Rate is not possible');
+
     const movie = await this.movieModel.findById(rateDto.movie_id).exec();
 
-    if (!movie) {
-      throw new CustomException('Movie not found');
-    }
+    if (!movie) throw new CustomException('Movie not found');
 
     const { count, average } = movie.ratings;
 
@@ -91,14 +92,14 @@ export class MovieService {
 
   async addToWatchlist(
     movieId: Types.ObjectId,
-    userId: string,
+    userId: Types.ObjectId,
   ): Promise<Movie> {
     const movie = await this.movieModel.findById(movieId).exec();
     if (!movie) {
       throw new CustomException('Movie not found');
     }
 
-    const isAlreadyInWatchlist = movie.watchlistedBy.includes(userId);
+    const isAlreadyInWatchlist = movie.watchlistedBy.includes(String(userId));
     if (isAlreadyInWatchlist) {
       throw new CustomException("Movie is already in the user's watchlist");
     }
@@ -109,7 +110,7 @@ export class MovieService {
     }
 
     if (!user.watchlist.includes(movieId)) {
-      movie.watchlistedBy.push(userId);
+      movie.watchlistedBy.push(String(userId));
       user.watchlist.push(movieId);
     } else {
       throw new CustomException("Movie already in the user's watchlist ");
@@ -129,7 +130,7 @@ export class MovieService {
       .exec();
   }
 
-  async removeFromWatchlist(movieId: Types.ObjectId, userId: string) {
+  async removeFromWatchlist(movieId: Types.ObjectId, userId: Types.ObjectId) {
     const user = await this.userModel.findById(userId).exec();
 
     if (!user) {
@@ -149,7 +150,7 @@ export class MovieService {
       throw new CustomException('Movie not found in watchlist');
     }
 
-    const userIndex = movie.watchlistedBy.indexOf(userId);
+    const userIndex = movie.watchlistedBy.indexOf(String(userId));
 
     if (userIndex > -1) {
       movie.watchlistedBy.splice(userIndex, 1);

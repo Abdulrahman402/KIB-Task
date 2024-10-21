@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Types } from 'mongoose';
-import { MoviesDto } from 'src/movie/movie.response.dto';
 
 export class CurrentDto {
   @ApiProperty({ description: 'Unique identifier for the user' })

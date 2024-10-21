@@ -1,5 +1,5 @@
 import { Schema, Document, Types } from 'mongoose';
-import { Movie } from 'src/movie/schemas/movie.schema';
+import { Movie } from '../../movie/schemas/movie.schema';
 
 export interface User extends Document {
   _id: Types.ObjectId;

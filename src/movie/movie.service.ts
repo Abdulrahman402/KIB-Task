@@ -52,7 +52,7 @@ export class MovieService {
   }
 
   async rateMovie(rateDto: RateDto, userId: Types.ObjectId): Promise<Movie> {
-    const movie = await this.movieModel.findById(rateDto._id).exec();
+    const movie = await this.movieModel.findById(rateDto.movie_id).exec();
 
     if (!movie) {
       throw new CustomException('Movie not found');

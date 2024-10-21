@@ -6,6 +6,7 @@ import { compare, hashSync } from 'bcrypt';
 import { AuthDto } from 'src/auth/auth.dto';
 import { CustomException } from 'src/common/filters/custom-exception.filter';
 import { JwtService } from '@nestjs/jwt';
+import { omit } from 'ramda';
 
 @Injectable()
 export class AuthService {
@@ -48,7 +49,11 @@ export class AuthService {
       this.createRefreshToken({ _id: user._id }),
     ]);
 
-    return { access_token: accessToken, refresh_token: refreshToken };
+    return {
+      user: omit(['password'], user.toObject()),
+      access_token: accessToken,
+      refresh_token: refreshToken,
+    };
   }
 
   async login(loginBody: AuthDto) {
@@ -65,6 +70,10 @@ export class AuthService {
       this.createRefreshToken({ _id: user._id }),
     ]);
 
-    return { access_token: accessToken, refresh_token: refreshToken };
+    return {
+      user: omit(['password'], user.toObject()),
+      access_token: accessToken,
+      refresh_token: refreshToken,
+    };
   }
 }

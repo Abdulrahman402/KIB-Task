@@ -2,6 +2,7 @@ import { Injectable, Inject } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Cache } from 'cache-manager';
+import { omit } from 'ramda';
 
 import { User } from './schemas/user.schema';
 import { CustomException } from 'src/common/filters/custom-exception.filter';
@@ -14,11 +15,15 @@ export class UserService {
   ) {}
 
   async currentUser(user_id) {
-    const user = await this.userModel.findById(user_id).select('-password');
+    const user = (
+      await this.userModel
+        .findById(user_id)
+        .select('-password -watchlist -ratings')
+    ).toObject();
 
     if (!user) throw new CustomException('User not found');
 
-    return user;
+    return { ...omit(['password'], user) };
   }
 
   async findUserWithWatchlist(userId: string) {

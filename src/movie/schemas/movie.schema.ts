@@ -1,6 +1,8 @@
 import { Schema, Document } from 'mongoose';
+import { Types } from 'mongoose';
 
 export interface Movie extends Document {
+  _id: Types.ObjectId;
   title: string;
   tmdb_id: string;
   genre: string[];

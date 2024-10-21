@@ -3,9 +3,9 @@ import { MovieService } from './movie.service';
 import { MovieController } from './movie.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { MovieSchema } from './schemas/movie.schema';
-import { TmdbService } from 'src/tmdb/tmdb.service';
-import { UserService } from 'src/user/user.service';
-import { UserSchema } from 'src/user/schemas/user.schema';
+import { TmdbService } from '../tmdb/tmdb.service';
+import { UserService } from '../user/user.service';
+import { UserSchema } from '../user/schemas/user.schema';
 
 @Module({
   imports: [

@@ -1,6 +1,6 @@
 import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
-import { Authenticate } from 'src/common/guard';
+import { Authenticate } from '../common/guard';
 import { Request } from 'express';
 import {
   ApiBearerAuth,

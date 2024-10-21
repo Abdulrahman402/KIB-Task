@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from 'src/user/schemas/user.schema';
+import { User } from '../user/schemas/user.schema';
 import { Model, Types } from 'mongoose';
 import { compare, hashSync } from 'bcrypt';
-import { AuthDto } from 'src/auth/auth.dto';
-import { CustomException } from 'src/common/filters/custom-exception.filter';
+import { AuthDto } from '../auth/auth.dto';
+import { CustomException } from '../common/filters/custom-exception.filter';
 import { JwtService } from '@nestjs/jwt';
 import { omit } from 'ramda';
 

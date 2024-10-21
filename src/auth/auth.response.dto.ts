@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Types } from 'mongoose';
-import { Movie } from 'src/movie/schemas/movie.schema';
+import { Movie } from '../movie/schemas/movie.schema';
 
 export class UserDto {
   @ApiProperty({ description: 'The username of the user' })

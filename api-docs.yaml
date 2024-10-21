@@ -1,0 +1,94 @@
+openapi: 3.0.0
+info:
+  title: KIB Task API
+  description: Documentation for the KIB Task API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /api/user/current:
+    get:
+      summary: Get Current User
+      security:
+        - Authenticate: []
+      responses:
+        '200':
+          description: Successful retrieval of current user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                  name:
+                    type: string
+                  email:
+                    type: string
+        '401':
+          description: Unauthorized access
+
+  /api/user/watchlist:
+    get:
+      summary: Get User Watchlist
+      security:
+        - Authenticate: []
+      responses:
+        '200':
+          description: Successful retrieval of user's watchlist
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: string
+                  watchlist:
+                    type: array
+                    items:
+                      type: string # Adjust this according to the actual structure of the watchlist items
+        '401':
+          description: Unauthorized access
+
+  /api/user/ratings:
+    get:
+      summary: Get User Rated Movies
+      security:
+        - Authenticate: []
+      responses:
+        '200':
+          description: Successful retrieval of user's rated movies
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userId:
+                    type: string
+                  ratings:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        movieId:
+                          type: string
+                        rating:
+                          type: number
+        '401':
+          description: Unauthorized access
+
+components:
+  securitySchemes:
+    Authenticate:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+        code:
+          type: integer
